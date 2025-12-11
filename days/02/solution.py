@@ -5,14 +5,15 @@ def parse_range(range_):
 
     invalid_added = 0
 
-    for n in range(start, end):
+    for n in range(start, end+1):
         str_num = str(n)
-        if len(str_num) % 2 == 0:
-            mid = len(str_num) // 2
-            if str_num[:mid] == str_num[mid:]:
-                # it's double/invalid, increment counter
-                print(f"invalud value: {str_num}")
+        for i in range(1, len(str_num) // 2 + 1):
+            rep = len(str_num) // i
+            #print(f"{str_num[:i]} * {rep} => {str_num[:i] * rep} => {str_num}?")
+            result = str_num[:i] * rep
+            if result == str_num:
                 invalid_added += n
+                break
 
     return invalid_added
     
@@ -27,6 +28,7 @@ def main():
     for range in ranges:
         invalid_added += parse_range(range)
         print(f"invalid count: {invalid_added}")
+        
 
 
     print(f"total invalid count: {invalid_added}")
