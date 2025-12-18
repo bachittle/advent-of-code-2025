@@ -1,12 +1,12 @@
-def is_roll_accessible(grid, x, y):
+def adjacent_roll_count(grid, x, y):
     """
-    a roll of toilet paper at index x,y is accessible if there are fewer than four rolls of paper in the eight adjacent positions.
-    this function returns True if x,y is a roll of toilet paper and is accessible, False otherwise
+    a roll of toilet paper at index x,y has 8 adjacent neighbors
+    this function returns the number of adjacent neighbors that are toilet paper rolls @
 
     x is along columns, y is along rows, matching how it might look on a graph
     """
-    if grid[y][x] != "@":
-        return False
+    if grid[y][x] == ".":
+        return None
     
     count = 0
 
@@ -23,26 +23,47 @@ def is_roll_accessible(grid, x, y):
             if new_x < 0 or new_y < 0 or new_x >= len(grid[0]) or new_y >= len(grid):
                 continue # ignore outside bounds
 
-            if grid[new_y][new_x] == "@":
+            if grid[new_y][new_x] == "@" or grid[new_y][new_x] == "x":
                 count += 1
-    
-    return count < 4
+    if count < 4:
+        grid[y][x] = "x"
+
+    return count
+
+def print_grid(grid):
+    for row in grid:
+        print(''.join(row))
 
 def parse_grid(grid):
-    accessible_roll_count = 0
-    for i in range(len(grid)):
-        row = grid[i]
+    total_roll_count = 0
+    while True:
+        roll_count = 0
+        for i in range(len(grid)):
+            row = grid[i]
 
-        for j in range(len(row)):
-            is_accessible = is_roll_accessible(grid, j, i)
-            if is_accessible:
-                accessible_roll_count += 1
-    
-    print(f"accessible roll count: {accessible_roll_count}")
+            for j in range(len(row)):
+                count = adjacent_roll_count(grid, j, i)
+                if count is not None and count < 4:
+                    roll_count += 1
+        
+        #print(f"current roll count: {total_roll_count}")
+        #print(f"roll count: {roll_count}")
+        if roll_count == 0:
+            break
+
+        total_roll_count += roll_count
+
+        # replace all x's with .'s
+        for i in range(len(grid)):
+            for j in range(len(grid[i])):
+                if grid[i][j] == 'x':
+                    grid[i][j] = '.'
+
+    print(f"total roll count: {total_roll_count}")
 
 def main():
     with open("input.txt") as fp:
-        grid = fp.read().strip().split()
+        grid = [list(line) for line in fp.read().strip().split()]
 
     parse_grid(grid)
 
